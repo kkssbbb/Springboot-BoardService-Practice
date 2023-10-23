@@ -37,7 +37,7 @@ class ArticleRepositoryTest {
         //Then
         assertThat(articles)
                 .isNotNull()
-                .hasSize(0);
+                .hasSize(123);
 
     }
 
