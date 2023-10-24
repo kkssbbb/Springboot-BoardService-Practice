@@ -23,6 +23,13 @@ spring:
   h2.console.enabled: true
   sql.init.mode: always
 
+
+# spring data reposit 관련 설절
+  data:
+    rest:.base-path: /api
+    rest:
+      detection-strategy: annotated
+
 ---
 spring:
   config.activate.on-profile: testdb
