@@ -35,8 +35,42 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'org.springframework.data:spring-data-rest-hal-explorer'
-}
+
+
+	// queryDSL 설정
+	implementation "com.querydsl:querydsl-jpa"
+	implementation "com.querydsl:querydsl-core"
+	implementation "com.querydsl:querydsl-collections"
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 대응 코드
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api" // java.lang.NoClassDefFoundError (javax.annotation.Entity) 대응 코드
+
+	}
+
+
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+
+
+// Querydsl 설정부  -문자열 타입으로  generated 변수 생성
+// 디폴트 설정으로는 q클래스들이 .build에 자동으로 생성되는데 나중에 빌드를할때 그래들 빌드와 인텔리제이빌드가 되면서 출돌문제가 난다
+// 그문제를 해결하기 위한 방법으오 따로 q클래스를 지정경로에 꺼내온 것이다.
+def generated = 'src/main/generated'
+
+// querydsl QClass 파일 생성 위치를 지정
+tasks.withType(JavaCompile) {
+	options.getGeneratedSourceOutputDirectory().set(file(generated))
+}
+
+// java source set 에 querydsl QClass 위치 추가
+sourceSets {
+	main.java.srcDirs += [ generated ]
+}
+
+// gradle clean 시에 QClass 디렉토리 삭제 -> 그래들은 파일이 따로 지정되어있는걸 모르기때문에 경로를 명시해서 삭제
+clean {
+	delete file(generated)
 }
